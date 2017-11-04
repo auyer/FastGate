@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/auyer/gate/config"
+	"github.com/auyer/fastgate/config"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -17,6 +17,7 @@ func main() {
 		log.Print(err.Error())
 		return
 	}
+	log.SetOutput(config.LogFile)
 
 	// BEGIN HTTPS
 
