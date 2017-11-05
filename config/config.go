@@ -20,7 +20,7 @@ type configStruct struct {
 	HttpsPort       string `json:"HttpsPort"`
 	TLSKeyLocation  string `json:"TLSKeyLocation"`
 	TLSCertLocation string `json:"TLSCertLocation"`
-	DbAddress       string `json:"DbAddress"`
+	DatabasePath    string `json:"DatabasePath"`
 	Debug           string `json:"Debug"`
 }
 
