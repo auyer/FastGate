@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/auyer/fastgate/config"
+	"github.com/auyer/fastgate/db"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -18,6 +19,8 @@ func main() {
 		return
 	}
 	log.SetOutput(config.LogFile)
+	db.Init()
+	defer db.GetDB().Close()
 
 	// BEGIN HTTPS
 
