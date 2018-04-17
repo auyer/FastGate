@@ -48,14 +48,14 @@ func main() {
 		return c.String(http.StatusCreated, " ")
 	})
 
-	httpsRouter.GET("/api/*", func(c echo.Context) error {
+	httpsRouter.Any("/api/*", func(c echo.Context) error {
 		value, err := db.GetEndpoint(c.Request().URL.Path)
 		if err != nil {
 			log.Println(err.Error())
 			return c.String(http.StatusNotFound, err.Error())
 		}
 		//return c.Redirect(http.StatusPermanentRedirect, fmt.Sprint("https://", c.Request().Host, ".", c.Request().URL.Path))
-		return c.Redirect(http.StatusPermanentRedirect, fmt.Sprint("http://", value, c.Request().URL.Path))
+		return c.Redirect(http.StatusPermanentRedirect, fmt.Sprint(value, c.Request().URL.Path))
 	})
 
 	err = httpsRouter.StartTLS(":"+config.ConfigParams.HttpsPort, config.ConfigParams.TLSCertLocation, config.ConfigParams.TLSKeyLocation) // listen and serve on 0.0.0.0:8080
