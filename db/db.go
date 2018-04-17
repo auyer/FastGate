@@ -62,6 +62,7 @@ func UpdateEndpoint(uri string, address string) error {
 func GetEndpoint(uri string) (value string, err error) {
 	var result []byte
 	err = db.View(func(txn *badger.Txn) error {
+		//item, err := txn.Get([]byte(uri))
 		item, err := txn.Get([]byte(uri))
 		if err != nil {
 			return err
@@ -70,7 +71,8 @@ func GetEndpoint(uri string) (value string, err error) {
 		if err != nil {
 			return err
 		}
-		copy(result, val)
+		result = val
+		//copy(result, val)
 		return err
 	})
 	return string(result), err
