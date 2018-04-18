@@ -6,7 +6,7 @@ go:
 install:
   - make dependency
 script:
-#  - make test
+  - make test
 matrix:
   allow_failures:
     include:
