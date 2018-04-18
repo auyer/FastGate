@@ -5,10 +5,17 @@
 *.dylib
 .vscode
 
-# Test binary, build with `go test -c`
 *.test
+.DS_Store
+coverage.txt
+_test
+vendor
+.idea
+*.iml
+*.out
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 *.key
 *.pem
+
