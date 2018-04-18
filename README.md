@@ -3,7 +3,7 @@
   <p align="center">
     <a href="https://github.com/auyer/fastgate/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/auyer/FastGate.svg"></a>
     <a href="https://github.com/auyer/FastGate/blob/master/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg"></a>
-    <a href="https://travis-ci.org/auyer/FastGate"><img alt="Travis" src="https://img.shields.io/travis/auyer/FastGate/master.svg"></a>
+   <a href="https://travis-ci.org/auyer/FastGate"><img alt="Travis" src="https://travis-ci.org/auyer/FastGate.svg?branch=master"></a>
     <a href="https://goreportcard.com/report/github.com/auyer/FastGate"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/auyer/FastGate?&fuckgithubcache=1"></a>
   </p>
 </p>
