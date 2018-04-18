@@ -14,5 +14,12 @@ Fast, light and Low Overhead API Gateway written in GO
 FastGate works by redirecting traffic to the correct IP. The connection to the Gateway closes just after the  redirect.
 
 
+# Usage
+  ```
+    ./fastgate -config ./path_to_config_file
+  ```
+  A sample to the configuration file can be found in [config.model.json](config.model.json)
+
+
 # TODO
  - Write a To-Do list
