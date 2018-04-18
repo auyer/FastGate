@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/dgraph-io/badger"
 )
@@ -13,19 +12,17 @@ import (
 // }
 
 var (
-	db    *badger.DB
+	DbVar *badger.DB
 	Dpath string
 )
 
 //Init ...
-func Init(databasePath string) {
+func Init(databasePath string) error {
 	dbinfo := fmt.Sprintf(databasePath)
 
 	var err error
-	db, err = ConnectDB(dbinfo)
-	if err != nil {
-		log.Fatal(err)
-	}
+	DbVar, err = ConnectDB(dbinfo)
+	return err
 
 }
 
@@ -45,12 +42,12 @@ func ConnectDB(databasePath string) (*badger.DB, error) {
 
 //GetDB ...
 func GetDB() *badger.DB {
-	return db
+	return DbVar
 }
 
 // Querries
 func UpdateEndpoint(uri string, address string) error {
-	return db.Update(func(txn *badger.Txn) error {
+	return DbVar.Update(func(txn *badger.Txn) error {
 		err := txn.Set([]byte(uri), []byte(address))
 		return err
 	})
@@ -58,7 +55,7 @@ func UpdateEndpoint(uri string, address string) error {
 
 func GetEndpoint(uri string) (value string, err error) {
 	var result []byte
-	err = db.View(func(txn *badger.Txn) error {
+	err = DbVar.View(func(txn *badger.Txn) error {
 		//item, err := txn.Get([]byte(uri))
 		item, err := txn.Get([]byte(uri))
 		if err != nil {
