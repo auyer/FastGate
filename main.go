@@ -40,9 +40,9 @@ func main() {
 	}
 	server.Debug, _ = strconv.ParseBool(config.ConfigParams.Debug)
 	if config.CertPresent {
-		log.Printf(banner, color.Red("v"+version), color.Blue(website), "HTTPS", color.Green(config.ConfigParams.HttpsPort))
+		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Green("HTTPS"), color.Green(config.ConfigParams.HttpsPort))
 	} else {
-		log.Printf(banner, color.Red("v"+version), color.Blue(website), "HTTP", color.Green(config.ConfigParams.HttpPort))
+		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Red("HTTP"), color.Green(config.ConfigParams.HttpPort))
 	}
 
 	server.Logger.SetOutput(config.LogFile)
