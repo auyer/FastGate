@@ -77,7 +77,7 @@ func main() {
 			return c.String(http.StatusNotFound, err.Error())
 		}
 		//return c.Redirect(http.StatusPermanentRedirect, fmt.Sprint("https://", c.Request().Host, ".", c.Request().URL.Path))
-		return c.Redirect(http.StatusPermanentRedirect, fmt.Sprint(value, c.Request().URL.Path))
+		return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
 	})
 
 	if config.CertPresent {
