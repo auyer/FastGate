@@ -34,9 +34,9 @@ type configStruct struct {
 	Debug           string `json:"Debug"`
 }
 
-func ReadConfig() error {
+func ReadConfig(configPath string) error {
 
-	file, err := ioutil.ReadFile("./config.json")
+	file, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		log.Print(err.Error() + "\nLoading Default Configuretion")
 		LogFile = os.Stdout
@@ -44,7 +44,6 @@ func ReadConfig() error {
 
 		err = json.Unmarshal(file, &ConfigParams)
 		if err != nil {
-			log.Print(err.Error())
 			return err
 		}
 		if ConfigParams.Debug == "true" {

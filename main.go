@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,6 +17,8 @@ import (
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/color"
 )
+
+var confFlag = flag.String("config", "./config.json", "PATH to Configuration File. See docs for example config.")
 
 const (
 	version = "0.1.alpha"
@@ -32,7 +35,8 @@ type Endpoint struct {
 func main() {
 	server := echo.New()
 	log.Printf("Starting FastGate APIGateway")
-	err := config.ReadConfig()
+	flag.Parse()
+	err := config.ReadConfig(*confFlag)
 	if err != nil {
 		fmt.Print("Error reading configuration file")
 		log.Print(err.Error())
@@ -52,8 +56,6 @@ func main() {
 	db.Init()
 	defer db.GetDB().Close()
 	// BEGIN HTTPS
-
-	//server := echo.New()
 
 	server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
