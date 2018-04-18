@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var (
+const (
 	testConfigPath = "./testconfig.config_test.go.json"
 	testConfig     = `{
 		"Debug": "false",
