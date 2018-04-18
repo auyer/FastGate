@@ -4,25 +4,22 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/auyer/fastgate/config"
 	"github.com/dgraph-io/badger"
 )
 
 //DB ...
-type DB struct {
-	*badger.DB
-}
+// type DB struct {
+// 	*badger.DB
+// }
 
 var (
-	db                *badger.DB
-	QUERRY_ALL_ROUTES = `select * from rh.servidor s
-inner join comum.pessoa p on (s.id_pessoa = p.id_pessoa)`
+	db    *badger.DB
+	Dpath string
 )
 
 //Init ...
-func Init() {
-
-	dbinfo := fmt.Sprintf(config.ConfigParams.DatabasePath)
+func Init(databasePath string) {
+	dbinfo := fmt.Sprintf(databasePath)
 
 	var err error
 	db, err = ConnectDB(dbinfo)
@@ -33,11 +30,11 @@ func Init() {
 }
 
 //ConnectDB ...
-func ConnectDB(dataSourceName string) (*badger.DB, error) {
+func ConnectDB(databasePath string) (*badger.DB, error) {
 
 	opts := badger.DefaultOptions
-	opts.Dir = config.ConfigParams.DatabasePath
-	opts.ValueDir = config.ConfigParams.DatabasePath
+	opts.Dir = databasePath
+	opts.ValueDir = databasePath
 	db, err := badger.Open(opts)
 
 	if err != nil {

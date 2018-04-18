@@ -53,7 +53,7 @@ func main() {
 	log.SetOutput(config.LogFile)
 
 	// Database Loading
-	db.Init()
+	db.Init(config.ConfigParams.DatabasePath)
 	defer db.GetDB().Close()
 	// BEGIN HTTPS
 
