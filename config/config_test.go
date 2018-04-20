@@ -80,7 +80,7 @@ func TestConfRead(t *testing.T) {
 		fileConf.Close()
 		//CREATE cert Test Files
 	}
-	if ConfigParams.Debug != "false" && ConfigParams.LogLocation != "./test_server.config_test.go.log" && ConfigParams.HttpPort != "8888test" && ConfigParams.HttpsPort != "88443test" && ConfigParams.DatabasePath != "./test_fastgate.db" && CertPresent != true {
+	if ConfigParams.Debug != "false" && ConfigParams.LogLocation != "./test_server.config_test.go.log" && ConfigParams.HttpPort != "8888test" && ConfigParams.HttpsPort != "88443test" && ConfigParams.DatabasePath != "./test_fastgate.db" && TLSEnabled != true {
 		t.Errorf("Configuration read from file interpreted wrongly.")
 	} else if _, err := os.Stat(ConfigParams.TLSCertLocation); os.IsNotExist(err) {
 		t.Errorf("Unable to Create Log File at" + ConfigParams.LogLocation)
