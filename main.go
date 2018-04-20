@@ -1,3 +1,4 @@
+// Package main controlls all features of the FastGate API Gateway.
 package main
 
 import (
@@ -11,13 +12,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/auyer/fastgate/config"
-	"github.com/auyer/fastgate/db"
+	"github.com/auyer/FastGate/config"
+	"github.com/auyer/FastGate/db"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/color"
 )
 
+// confFlag stores the flags available when calling the program from the command line.
 var confFlag = flag.String("config", "./config.json", "PATH to Configuration File. See docs for example config.")
 
 const (
@@ -27,7 +29,7 @@ const (
 	// logo built with http://www.patorjk.com/software and https://www.browserling.com/tools/utf8-encode
 )
 
-type Endpoint struct {
+type endpoint struct {
 	Address string `json:"address"`
 	URI     string `json:"uri"`
 }
@@ -43,7 +45,7 @@ func main() {
 		return
 	}
 	server.Debug, _ = strconv.ParseBool(config.ConfigParams.Debug)
-	if config.CertPresent {
+	if config.TLSEnabled {
 		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Green("HTTPS"), color.Green(config.ConfigParams.HttpsPort))
 	} else {
 		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Red("HTTP"), color.Green(config.ConfigParams.HttpPort))
@@ -58,13 +60,12 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.GetDB().Close()
-	// BEGIN HTTPS
 
 	server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
 
 	server.POST("/fastgate/", func(c echo.Context) error {
-		var endp Endpoint
+		var endp endpoint
 		err := c.Bind(&endp)
 		if err != nil {
 			server.Logger.Info(err)
@@ -81,11 +82,10 @@ func main() {
 			server.Logger.Info(err.Error())
 			return c.String(http.StatusNotFound, err.Error())
 		}
-		//return c.Redirect(http.StatusPermanentRedirect, fmt.Sprint("https://", c.Request().Host, ".", c.Request().URL.Path))
 		return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
 	})
 
-	if config.CertPresent {
+	if config.TLSEnabled {
 		go func() {
 			if err := server.StartTLS(":"+config.ConfigParams.HttpsPort, config.ConfigParams.TLSCertLocation, config.ConfigParams.TLSKeyLocation); err != nil {
 				server.Logger.Info("shutting down the server")
@@ -120,5 +120,4 @@ func main() {
 			server.Logger.Fatal(err)
 		}
 	}
-
 }
