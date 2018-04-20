@@ -23,7 +23,7 @@ func TestDatabase(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unable to Init Database")
 	}
-	if DbVar != GetDB() {
+	if DbPointer != GetDB() {
 		t.Errorf("Failed assigning database to Variable")
 	}
 	err = UpdateEndpoint(testKey, testValue)
