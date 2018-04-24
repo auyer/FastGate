@@ -18,7 +18,7 @@ var (
 	// ConfigParams  *configStruct stores the values found in the config file, or the default values.
 	ConfigParams = configStruct{
 		LogLocation:     "",
-		HttpPort:        "8080",
+		HttpPort:        "8000",
 		HttpsPort:       "8443",
 		TLSKeyLocation:  "./devssl/server.key",
 		TLSCertLocation: "./devssl/server.pem",
