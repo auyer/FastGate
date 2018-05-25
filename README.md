@@ -1,12 +1,8 @@
-<p align="center">
-  <img alt="FastGate Logo" src="https://raw.githubusercontent.com/auyer/FastGate/master/media/logo.png"  />
-  <p align="center">
-    <a href="https://github.com/auyer/fastgate/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/auyer/FastGate.svg"></a>
-    <a href="https://github.com/auyer/FastGate/blob/master/LICENSE"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg"></a>
-   <a href="https://travis-ci.org/auyer/FastGate"><img alt="Travis" src="https://travis-ci.org/auyer/FastGate.svg?branch=master"></a>
-    <a href="https://goreportcard.com/report/github.com/auyer/FastGate"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/auyer/FastGate?&fuckgithubcache=1"></a>
-  </p>
-</p>
+
+  [![FastGateLogo](https://raw.githubusercontent.com/auyer/FastGate/master/media/logo.png)](https://raw.githubusercontent.com/auyer/FastGate/master/media/logo.png)
+
+  [![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/auyer/FastGate)
+  [![Release](https://img.shields.io/github/release/auyer/FastGate.svg)](https://github.com/auyer/fastgate/releases/latest) [![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](https://github.com/auyer/FastGate/blob/master/LICENSE) [![Travis-CI](https://travis-ci.org/auyer/FastGate.svg?branch=master)](https://travis-ci.org/auyer/FastGate) [![Go Report Card](https://goreportcard.com/badge/github.com/auyer/FastGate?&fuckgithubcache=1)](https://goreportcard.com/report/github.com/auyer/FastGate)
 
 ## A Fast, light and Low Overhead API Gateway written in GO.
 
@@ -50,10 +46,10 @@ By default, the Dockerfile picks the configuration file, TLS key and TLS cert fr
 ```
 {
   "address" : "https://yourEndpoint:8080"
-  "uri"     : "/api/your_resource"
+  "resource"     : "resource-name"
 }
 ```
-### Now send the desired request to `yourip:yourport/api/your_resource` and see it working !
+### Now send the desired request to `fastgate-ip:fastgate-port/your_resource` with the following header `X-fastgate-resource : resource-name`  and it should be working !
 
 
 

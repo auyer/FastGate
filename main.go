@@ -1,4 +1,3 @@
-// Package main controlls all features of the FastGate API Gateway.
 package main
 
 import (
