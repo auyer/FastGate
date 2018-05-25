@@ -30,8 +30,8 @@ const (
 )
 
 type endpoint struct {
-	Address string `json:"address"`
-	URI     string `json:"uri"`
+	Address  string `json:"address"`
+	Resource string `json:"resource"`
 }
 
 func main() {
@@ -71,18 +71,21 @@ func main() {
 			server.Logger.Info(err)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		db.UpdateEndpoint(endp.URI, endp.Address)
-
+		db.UpdateEndpoint(endp.Resource, endp.Address)
 		return c.String(http.StatusCreated, " ")
 	})
 
-	server.Any("/api/*", func(c echo.Context) error {
-		value, err := db.GetEndpoint(c.Request().URL.Path)
-		if err != nil {
-			server.Logger.Info(err.Error())
-			return c.String(http.StatusNotFound, err.Error())
+	server.Any("/*", func(c echo.Context) error {
+		resource := c.Request().Header.Get("X-fastgate-resource")
+		if resource != "" {
+			value, err := db.GetEndpoint(resource)
+			if err != nil {
+				server.Logger.Info(err.Error())
+				return c.String(http.StatusNotFound, err.Error())
+			}
+			return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
 		}
-		return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
+		return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
 	})
 
 	if config.TLSEnabled {
