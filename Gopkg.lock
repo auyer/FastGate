@@ -17,8 +17,8 @@
     "table",
     "y"
   ]
-  revision = "69611218c7078be6de16f4ea13fb256e701b6b73"
-  version = "v1.3.0"
+  revision = "690400e629977977ecddfa8ab3a7f9285e1041a8"
+  version = "v1.5.1"
 
 [[projects]]
   name = "github.com/dgrijalva/jwt-go"
@@ -116,6 +116,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5514e5fc403cfbb4983e4891a5510be057529be3b3232589fd21165af2f0b56e"
+  inputs-digest = "9be6b75079b635da7faa71203b5fc15f71b262bf69b831ad25a0719da89e636c"
   solver-name = "gps-cdcl"
   solver-version = 1
