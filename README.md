@@ -51,7 +51,29 @@ By default, the Dockerfile picks the configuration file, TLS key and TLS cert fr
 ```
 ### Now send the desired request to `fastgate-ip:fastgate-port/your_resource` with the following header `X-fastgate-resource : resource-name`  and it should be working !
 
+## Example curl commands:
+
+#### Registering 
+```bash
+  curl --request POST \
+    --url http://10.0.0.94:8000/fastgate/ \
+    --header 'content-type: application/json' \
+    --data '{
+      "address" : "http:/10.0.0.94:8080",
+      "resource": "localapi"
+      }
+      '
+```
+#### Using route 
+
+```bash
+  curl --request GET \
+    --url http://10.0.0.94:8000/api/localresource/ \
+    --header 'x-fastgate-resource: localapi'
+```
 
 
 # TODO
 - [ ] Write a To-Do list
+- [ ] Create a Tunneling Option for outside Networks
+- [ ] Create List All Routes for debugging
