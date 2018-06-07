@@ -35,6 +35,8 @@ type endpoint struct {
 
 func main() {
 	server := echo.New()
+	server.HideBanner = true
+	server.HidePort = true
 	log.Printf("Starting FastGate APIGateway")
 	flag.Parse()
 	err := config.ReadConfig(*confFlag)
