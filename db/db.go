@@ -41,18 +41,18 @@ func GetDB() *badger.DB {
 }
 
 // UpdateEndpoint is a simple querry that inserts/updates the Endpoint tuple used by FastGate.
-func UpdateEndpoint(uri string, address string) error {
+func UpdateEndpoint(key string, address string) error {
 	return DbPointer.Update(func(txn *badger.Txn) error {
-		err := txn.Set([]byte(uri), []byte(address))
+		err := txn.Set([]byte(key), []byte(address))
 		return err
 	})
 }
 
-// GetEndpoint finds an address matching an URI.
-func GetEndpoint(uri string) (value string, err error) {
+// GetEndpoint finds an address matching an key.
+func GetEndpoint(key string) (value string, err error) {
 	var result []byte
 	err = DbPointer.View(func(txn *badger.Txn) error {
-		item, err := txn.Get([]byte(uri))
+		item, err := txn.Get([]byte(key))
 		if err != nil {
 			return err
 		}
