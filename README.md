@@ -2,7 +2,7 @@
   [![FastGateLogo](https://raw.githubusercontent.com/auyer/FastGate/master/media/logo.png)](https://raw.githubusercontent.com/auyer/FastGate/master/media/logo.png)
 
   [![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/auyer/FastGate)
-  [![Release](https://img.shields.io/github/release/auyer/FastGate.svg)](https://github.com/auyer/fastgate/releases/latest) [![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](https://github.com/auyer/FastGate/blob/master/LICENSE) [![Travis-CI](https://travis-ci.org/auyer/FastGate.svg?branch=master)](https://travis-ci.org/auyer/FastGate) [![Go Report Card](https://goreportcard.com/badge/github.com/auyer/FastGate?&fuckgithubcache=1)](https://goreportcard.com/report/github.com/auyer/FastGate)
+  [![Release](https://img.shields.io/github/release/auyer/FastGate.svg)](https://github.com/auyer/fastgate/releases/latest) [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/auyer/FastGate/blob/master/LICENSE) [![Travis-CI](https://travis-ci.org/auyer/FastGate.svg?branch=master)](https://travis-ci.org/auyer/FastGate) [![Go Report Card](https://goreportcard.com/badge/github.com/auyer/FastGate?&fuckgithubcache=1)](https://goreportcard.com/report/github.com/auyer/FastGate)
 
 ## A Fast, light and Low Overhead API Gateway written in GO.
 
