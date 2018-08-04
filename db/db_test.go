@@ -19,25 +19,22 @@ func TestDatabase(t *testing.T) {
 			log.Fatal("Unable to clean Test Database Before testing. Check for permissions.")
 		}
 	}
-	err := Init(dbPath)
+	database, err := Init(dbPath)
 	if err != nil {
 		t.Errorf("Unable to Init Database")
 	}
-	if DbPointer != GetDB() {
-		t.Errorf("Failed assigning database to Variable")
-	}
-	err = UpdateEndpoint(testKey, testValue)
+	err = UpdateEndpoint(database, testKey, testValue)
 	if err != nil {
 		t.Errorf("Unable to Insert Tuple")
 	}
-	value, err := GetEndpoint(testKey)
+	value, err := GetEndpoint(database, testKey)
 	if err != nil {
 		t.Errorf("Unable to Fetch Tuple")
 	}
 	if value != testValue {
-		t.Errorf("Recieved Value not mathing with what was inserted.")
+		t.Errorf("Received Value not mathing with what was inserted.")
 	}
-	GetDB().Close()
+	err = database.Close()
 	if err != nil {
 		t.Errorf("Failed at Closing Database")
 	}

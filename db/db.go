@@ -8,17 +8,10 @@ import (
 	"github.com/dgraph-io/badger"
 )
 
-// DbPointer exported variable stores a pointer to the database initialized by the Init function.
-var DbPointer *badger.DB
-
 // Init takes a path as input and reads / creates a bBadger database .
-func Init(databasePath string) error {
+func Init(databasePath string) (*badger.DB, error) {
 	dbinfo := fmt.Sprintf(databasePath)
-
-	var err error
-	DbPointer, err = connectDB(dbinfo)
-	return err
-
+	return connectDB(dbinfo)
 }
 
 // connectDB manages the database connection and configuration.
@@ -35,23 +28,18 @@ func connectDB(databasePath string) (*badger.DB, error) {
 	return db, nil
 }
 
-// GetDB provides a pointer to the database initialized by the Init function.
-func GetDB() *badger.DB {
-	return DbPointer
-}
-
 // UpdateEndpoint is a simple querry that inserts/updates the Endpoint tuple used by FastGate.
-func UpdateEndpoint(key string, address string) error {
-	return DbPointer.Update(func(txn *badger.Txn) error {
+func UpdateEndpoint(database *badger.DB, key string, address string) error {
+	return database.Update(func(txn *badger.Txn) error {
 		err := txn.Set([]byte(key), []byte(address))
 		return err
 	})
 }
 
 // GetEndpoint finds an address matching an key.
-func GetEndpoint(key string) (value string, err error) {
+func GetEndpoint(database *badger.DB, key string) (value string, err error) {
 	var result []byte
-	err = DbPointer.View(func(txn *badger.Txn) error {
+	err = database.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte(key))
 		if err != nil {
 			return err

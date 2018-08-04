@@ -33,6 +33,7 @@ import (
 
 	"github.com/auyer/FastGate/config"
 	"github.com/auyer/FastGate/db"
+	"github.com/dgraph-io/badger"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/color"
@@ -40,6 +41,9 @@ import (
 
 // confFlag stores the flags available when calling the program from the command line.
 var confFlag = flag.String("config", "./config.json", "PATH to Configuration File. See docs for example config.")
+
+// database variable stores a pointer to the database initialized by the Init function in the main routine.
+var database *badger.DB
 
 const (
 	version = "0.1.alpha"
@@ -75,12 +79,12 @@ func main() {
 	server.Logger.SetOutput(config.LogFile)
 	log.SetOutput(config.LogFile)
 
-	// Database Loading
-	err = db.Init(config.ConfigParams.DatabasePath)
+	// Database loading/Initializing
+	database, err = db.Init(config.ConfigParams.DatabasePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.GetDB().Close()
+	defer database.Close()
 
 	server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
@@ -92,14 +96,14 @@ func main() {
 			server.Logger.Info(err)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		db.UpdateEndpoint(endp.Resource, endp.Address)
+		db.UpdateEndpoint(database, endp.Resource, endp.Address)
 		return c.String(http.StatusCreated, " ")
 	})
 
 	server.Any("/*", func(c echo.Context) error {
 		resource := c.Request().Header.Get("X-fastgate-resource")
 		if resource != "" {
-			value, err := db.GetEndpoint(resource)
+			value, err := db.GetEndpoint(database, resource)
 			if err != nil {
 				server.Logger.Info(err.Error())
 				return c.String(http.StatusNotFound, err.Error())
