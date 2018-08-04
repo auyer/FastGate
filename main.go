@@ -1,3 +1,23 @@
+// Package main controls all features of the FastGate API Gateway.
+// FasGate API Gateway is an application that  built with the Golang language
+/*
+You can run FastGate with the following command:
+```
+    fastgate -config ./path_to_config_file
+```
+  A sample to the configuration file can be found in config.model.json
+ To manually register (and test) FastGate, Send a POST request to `yourip:yourport/fastgate/` with a JSON like follows:
+```
+{
+  "address" : "https://yourEndpoint:8080"
+  "uri"     : "/api/your_resource"
+}
+```
+### Now send the desired request to `yourip:yourport/api/your_resource` and see it working !
+
+
+
+*/
 package main
 
 import (
