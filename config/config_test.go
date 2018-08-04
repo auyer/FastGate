@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	testConfigPath = "./testconfig.config_test.go.json"
-	testConfig     = `{
+	testConfigLogPath = "./test_server.config_test.go.log"
+	testConfigPath    = "./testconfig.config_test.go.json"
+	testConfig        = `{
 		"Debug": "false",
 		"LogLocation": "./test_server.config_test.go.log",
 		"HttpPort": "8888test",
@@ -102,5 +103,17 @@ func TestConfRead(t *testing.T) {
 	err = os.Remove(ConfigParams.LogLocation)
 	if err != nil {
 		log.Fatal("Unable to clean Test Log. Check for permissions.")
+	}
+}
+
+func TestLogCreator(t *testing.T) {
+	file := createLogfile(testConfigLogPath)
+	if file == nil {
+		t.Errorf("Unable to create logfile")
+	} else {
+		err := os.Remove(testConfigLogPath)
+		if err != nil {
+			t.Errorf("Unable to delete test logfile")
+		}
 	}
 }

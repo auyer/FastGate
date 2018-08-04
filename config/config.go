@@ -82,18 +82,16 @@ func createLogfile(logPath string) io.Writer {
 		if fileErr != nil {
 			fmt.Println(fileErr)
 			return nil
-		} else {
-			fmt.Println("Writing logs to new file " + logPath)
 		}
+		fmt.Println("Writing logs to new file " + logPath)
 		return fileLog
 	} else {
 		fileLog, fileErr := os.OpenFile(logPath, os.O_RDWR|os.O_APPEND, 0660)
 		if fileErr != nil {
 			fmt.Println(fileErr)
 			return nil
-		} else {
-			fmt.Println("Writing logs to file " + logPath)
 		}
+		fmt.Println("Writing logs to file " + logPath)
 		return fileLog
 	}
 }
