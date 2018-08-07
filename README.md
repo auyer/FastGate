@@ -7,7 +7,22 @@
 ## A Fast, light and Low Overhead API Gateway written in GO.
 
 Fast, light and Low Overhead API Gateway written in GO
-FastGate works by redirecting traffic to the correct IP. The connection to the Gateway closes just after the  redirect.
+FastGate works by either proxying or redirecting traffic to the correct IP.
+
+## Proxy VS Redirect
+
+This Gateway was designed to work in two different modes. Here are a few differences, and how to chose them:
+
+Proxy ( Enabled by Default) :
+
+- Can reach every network acessible by the Gateway, independent on the Client and Service.
+- All the data will be flowing trough this Gateway
+
+Redirect ( Set `ProxyMode` to `false` in the Configuration ): 
+
+- The connection with the Gateway will close right after the redirection, so the load will be minimum.
+- This method works only if the Client and the Server could reach eachother in the first place.
+
 
 # Installation
 
@@ -81,6 +96,10 @@ curl --request GET \
 
 
 # TODO
-- [ ] Write a To-Do list
-- [ ] Create a Tunneling Option for outside Networks
-- [ ] Create List All Routes for debugging
+- [x] Write a To-Do list
+- [x] Create List All Routes for debugging
+- [ ] Create a Proxy Option for outside Networks
+- [ ] Benchmark comparing Redirect to Proxy
+- [ ] Define scope ( How simple shoud we keep it ?)
+
+
