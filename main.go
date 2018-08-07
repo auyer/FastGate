@@ -95,11 +95,11 @@ func proxyToEndpoint(c echo.Context) error {
 			return c.String(http.StatusNotFound, err.Error())
 		}
 
-		return foward(c.Response().Writer, c.Request(), fmt.Sprint(value))
+		return forward(c.Response().Writer, c.Request(), fmt.Sprint(value))
 	}
 	return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
 }
-func foward(w http.ResponseWriter, r *http.Request, dest string) error {
+func forward(w http.ResponseWriter, r *http.Request, dest string) error {
 	destURL, err := url.Parse(dest)
 	proxy := httputil.NewSingleHostReverseProxy(destURL)
 

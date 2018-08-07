@@ -1,4 +1,4 @@
-// Package main controlls all features of the FastGate API Gateway.
+// Package main controls all features of the FastGate API Gateway.
 //
 // To use this application, the user must send a POST request to /fastgate/ with the following body:
 /*
