@@ -98,6 +98,7 @@ curl --request GET \
 # TODO
 - [x] Write a To-Do list
 - [x] Create List All Routes for debugging
+- [ ] Improve Testing on API routes
 - [ ] Create a Proxy Option for outside Networks
 - [ ] Benchmark comparing Redirect to Proxy
 - [ ] Define scope ( How simple shoud we keep it ?)

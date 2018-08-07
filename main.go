@@ -87,6 +87,7 @@ func redirectToEndpoint(c echo.Context) error {
 	return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
 }
 
+// proxyToEndpoint handler will proxy the request to the address registered
 func proxyToEndpoint(c echo.Context) error {
 	resource := c.Request().Header.Get("X-fastgate-resource")
 	if resource != "" {
@@ -95,11 +96,13 @@ func proxyToEndpoint(c echo.Context) error {
 			return c.String(http.StatusNotFound, err.Error())
 		}
 
-		return forward(c.Response().Writer, c.Request(), fmt.Sprint(value))
+		return proxyForward(c.Response().Writer, c.Request(), fmt.Sprint(value))
 	}
 	return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
 }
-func forward(w http.ResponseWriter, r *http.Request, dest string) error {
+
+// proxyForward function handles the Reverse Proxy modifing a few parameters to mantain TLS-ability
+func proxyForward(w http.ResponseWriter, r *http.Request, dest string) error {
 	destURL, err := url.Parse(dest)
 	proxy := httputil.NewSingleHostReverseProxy(destURL)
 
@@ -111,6 +114,7 @@ func forward(w http.ResponseWriter, r *http.Request, dest string) error {
 	return err
 }
 
+// main function is run when running FastGate. It is responsible for gluing everything together
 func main() {
 	server := echo.New()
 	server.HideBanner = true
