@@ -81,25 +81,12 @@ func TestTLSCerts(t *testing.T) {
 	fileConf.Close()
 
 	if ConfigParams.TLSKeyLocation == "./tls_test.go.key" && ConfigParams.TLSCertLocation == "./tls.test.go.pem" {
-		if _, err := os.Stat(ConfigParams.TLSCertLocation); !os.IsNotExist(err) {
-			err = os.Remove(ConfigParams.TLSCertLocation)
-			if err != nil {
-				log.Fatal("Unable to clean Test Certificate. Check for permissions.")
-			}
-		}
 		fileConf, fileErr := os.Create(ConfigParams.TLSCertLocation)
 		if fileErr != nil {
 			log.Fatal("Unable to create Test Certificate. Check for permissions.")
 		}
 		fileConf.WriteString(" ")
 		fileConf.Close()
-
-		if _, err := os.Stat(ConfigParams.TLSKeyLocation); !os.IsNotExist(err) {
-			err = os.Remove(ConfigParams.TLSKeyLocation)
-			if err != nil {
-				log.Fatal("Unable to clean Test Key. Check for permissions.")
-			}
-		}
 		fileConf, fileErr = os.Create(ConfigParams.TLSKeyLocation)
 		if fileErr != nil {
 			log.Fatal("Unable to create Test Key. Check for permissions.")
@@ -108,6 +95,25 @@ func TestTLSCerts(t *testing.T) {
 		fileConf.Close()
 		//CREATE cert Test Files
 		ReadConfig(testConfigPath)
+		if !TLSEnabled {
+			t.Errorf("Failed to enter TLS mode")
+		}
+	}
+	err := os.Remove(testConfigPath)
+	if err != nil {
+		log.Fatal("Unable to clean Test ConfigFile. Check for permissions.")
+	}
+	if _, err := os.Stat(ConfigParams.TLSCertLocation); !os.IsNotExist(err) {
+		err = os.Remove(ConfigParams.TLSCertLocation)
+		if err != nil {
+			log.Fatal("Unable to clean Test Certificate. Check for permissions.")
+		}
+	}
+	if _, err := os.Stat(ConfigParams.TLSKeyLocation); !os.IsNotExist(err) {
+		err = os.Remove(ConfigParams.TLSKeyLocation)
+		if err != nil {
+			log.Fatal("Unable to clean Test Key. Check for permissions.")
+		}
 	}
 }
 
