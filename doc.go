@@ -35,4 +35,23 @@ $ Hello !
 
 
 */
+// To help with usage and debugging, there is a route for listing all registered routes.
+// This list will be returned when requesting a GET on /fastgate/
+//
+// See Example Below:
+/*
+
+$ curl --request GET   --url http://localhost:8000/fastgate/   --header 'content-type: application/json' -v
+> GET /fastgate/ HTTP/1.1
+...
+< HTTP/1.1 202 Accepted
+< Content-Type: application/json; charset=UTF-8
+< Content-Length: 77
+<
+[
+  {
+    "address": "localapi",
+    "resource": "http:/localhost:8080"
+  }
+*/
 package main

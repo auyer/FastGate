@@ -56,10 +56,10 @@ By default, the Dockerfile picks the configuration file, TLS key and TLS cert fr
 #### Registering 
 ```bash
   curl --request POST \
-    --url http://10.0.0.94:8000/fastgate/ \
+    --url http://localhost:8000/fastgate/ \
     --header 'content-type: application/json' \
     --data '{
-      "address" : "http:/10.0.0.94:8080",
+      "address" : "http:/localhost:8080",
       "resource": "localapi"
       }
       '
@@ -68,8 +68,15 @@ By default, the Dockerfile picks the configuration file, TLS key and TLS cert fr
 
 ```bash
   curl --request GET \
-    --url http://10.0.0.94:8000/api/localresource/ \
+    --url http://localhost:8000/api/localresource/ \
     --header 'x-fastgate-resource: localapi'
+```
+#### Geting List of Registered routes 
+
+```bash
+curl --request GET \
+  --url http://localhost:8000/fastgate/ \
+  --header 'content-type: application/json'
 ```
 
 
