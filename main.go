@@ -52,11 +52,6 @@ const (
 	// logo built with http://www.patorjk.com/software and https://www.browserling.com/tools/utf8-encode
 )
 
-type endpoint struct {
-	Address  string `json:"address"`
-	Resource string `json:"resource"`
-}
-
 func main() {
 	server := echo.New()
 	server.HideBanner = true
@@ -90,7 +85,7 @@ func main() {
 	server.Use(middleware.Recover())
 
 	server.POST("/fastgate/", func(c echo.Context) error {
-		var endp endpoint
+		var endp db.Endpoint
 		err := c.Bind(&endp)
 		if err != nil {
 			server.Logger.Info(err)
@@ -98,6 +93,14 @@ func main() {
 		}
 		db.UpdateEndpoint(database, endp.Resource, endp.Address)
 		return c.String(http.StatusCreated, " ")
+	})
+
+	server.GET("/fastgate/", func(c echo.Context) error {
+		res, err := db.GetEndpoints(database)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, " ")
+		}
+		return c.JSON(http.StatusAccepted, res)
 	})
 
 	server.Any("/*", func(c echo.Context) error {

@@ -8,6 +8,11 @@ import (
 	"github.com/dgraph-io/badger"
 )
 
+type Endpoint struct {
+	Address  string `json:"address"`
+	Resource string `json:"resource"`
+}
+
 // Init takes a path as input and reads / creates a bBadger database .
 func Init(databasePath string) (*badger.DB, error) {
 	dbinfo := fmt.Sprintf(databasePath)
@@ -53,4 +58,26 @@ func GetEndpoint(database *badger.DB, key string) (value string, err error) {
 		return err
 	})
 	return string(result), err
+}
+
+func GetEndpoints(database *badger.DB) (endpoints []Endpoint, err error) {
+	// var endpoints []Endpoint
+	err = database.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchSize = 10
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Rewind(); it.Valid(); it.Next() {
+			item := it.Item()
+			k := item.Key()
+			v, err := item.Value()
+			if err != nil {
+				return err
+			}
+			// result, _ := binary.Varint(v)
+			endpoints = append(endpoints, Endpoint{string(k), string(v)})
+		}
+		return nil
+	})
+	return
 }
