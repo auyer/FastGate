@@ -52,6 +52,39 @@ const (
 	// logo built with http://www.patorjk.com/software and https://www.browserling.com/tools/utf8-encode
 )
 
+// postNewEndpoint will create new endpoints upon request
+func postNewEndpoint(c echo.Context) error {
+	var endp db.Endpoint
+	err := c.Bind(&endp)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	db.UpdateEndpoint(database, endp.Resource, endp.Address)
+	return c.String(http.StatusCreated, " ")
+}
+
+// getAllEndpoints will return all registered endpoints
+func getAllEndpoints(c echo.Context) error {
+	res, err := db.GetEndpoints(database)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, " ")
+	}
+	return c.JSON(http.StatusAccepted, res)
+}
+
+// redirectToEndpoint handler will redirect the request to the address registered
+func redirectToEndpoint(c echo.Context) error {
+	resource := c.Request().Header.Get("X-fastgate-resource")
+	if resource != "" {
+		value, err := db.GetEndpoint(database, resource)
+		if err != nil {
+			return c.String(http.StatusNotFound, err.Error())
+		}
+		return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
+	}
+	return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
+}
+
 func main() {
 	server := echo.New()
 	server.HideBanner = true
@@ -84,37 +117,14 @@ func main() {
 	server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
 
-	server.POST("/fastgate/", func(c echo.Context) error {
-		var endp db.Endpoint
-		err := c.Bind(&endp)
-		if err != nil {
-			server.Logger.Info(err)
-			return c.String(http.StatusBadRequest, err.Error())
-		}
-		db.UpdateEndpoint(database, endp.Resource, endp.Address)
-		return c.String(http.StatusCreated, " ")
-	})
+	// Loading postNewEndpoint route
+	server.POST("/fastgate/", postNewEndpoint)
 
-	server.GET("/fastgate/", func(c echo.Context) error {
-		res, err := db.GetEndpoints(database)
-		if err != nil {
-			return c.String(http.StatusInternalServerError, " ")
-		}
-		return c.JSON(http.StatusAccepted, res)
-	})
+	// Loading getAllEndpoints route
+	server.GET("/fastgate/", getAllEndpoints)
 
-	server.Any("/*", func(c echo.Context) error {
-		resource := c.Request().Header.Get("X-fastgate-resource")
-		if resource != "" {
-			value, err := db.GetEndpoint(database, resource)
-			if err != nil {
-				server.Logger.Info(err.Error())
-				return c.String(http.StatusNotFound, err.Error())
-			}
-			return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
-		}
-		return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
-	})
+	// Loading redirectToEndpoint route
+	server.Any("/*", redirectToEndpoint)
 
 	if config.TLSEnabled {
 		go func() {
