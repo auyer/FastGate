@@ -54,14 +54,12 @@ func GetEndpoint(database *badger.DB, key string) (value string, err error) {
 			return err
 		}
 		result = val
-		//copy(result, val)
 		return err
 	})
 	return string(result), err
 }
 
 func GetEndpoints(database *badger.DB) (endpoints []Endpoint, err error) {
-	// var endpoints []Endpoint
 	err = database.View(func(txn *badger.Txn) error {
 		opts := badger.DefaultIteratorOptions
 		opts.PrefetchSize = 10
@@ -74,7 +72,6 @@ func GetEndpoints(database *badger.DB) (endpoints []Endpoint, err error) {
 			if err != nil {
 				return err
 			}
-			// result, _ := binary.Varint(v)
 			endpoints = append(endpoints, Endpoint{string(k), string(v)})
 		}
 		return nil
