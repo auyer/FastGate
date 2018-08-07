@@ -34,6 +34,14 @@ func TestDatabase(t *testing.T) {
 	if value != testValue {
 		t.Errorf("Received Value not mathing with what was inserted.")
 	}
+	values, err := GetEndpoints(database)
+	if err != nil {
+		t.Errorf("Unable to Fetch Tuple")
+	}
+	testValues := []Endpoint{Endpoint{testKey, testValue}}
+	if values[0] != testValues[0] {
+		t.Errorf("Received Value not mathing with what was inserted.")
+	}
 	err = database.Close()
 	if err != nil {
 		t.Errorf("Failed at Closing Database")
