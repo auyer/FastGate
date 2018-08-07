@@ -8,6 +8,7 @@ import (
 	"github.com/dgraph-io/badger"
 )
 
+// Endpoint structure stores the Endpoints for the gateway.
 type Endpoint struct {
 	Address  string `json:"address"`
 	Resource string `json:"resource"`
@@ -21,12 +22,10 @@ func Init(databasePath string) (*badger.DB, error) {
 
 // connectDB manages the database connection and configuration.
 func connectDB(databasePath string) (*badger.DB, error) {
-
 	opts := badger.DefaultOptions
 	opts.Dir = databasePath
 	opts.ValueDir = databasePath
 	db, err := badger.Open(opts)
-
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +40,7 @@ func UpdateEndpoint(database *badger.DB, key string, address string) error {
 	})
 }
 
-// GetEndpoint finds an address matching an key.
+// GetEndpoint finds an address matching an key and returns it as a string.
 func GetEndpoint(database *badger.DB, key string) (value string, err error) {
 	var result []byte
 	err = database.View(func(txn *badger.Txn) error {
@@ -59,6 +58,7 @@ func GetEndpoint(database *badger.DB, key string) (value string, err error) {
 	return string(result), err
 }
 
+// GetEndpoints function will read every entry in the database and return it as a list of Endpoints.
 func GetEndpoints(database *badger.DB) (endpoints []Endpoint, err error) {
 	err = database.View(func(txn *badger.Txn) error {
 		opts := badger.DefaultIteratorOptions
