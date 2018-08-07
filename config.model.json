@@ -5,6 +5,7 @@
     "HttpsPort": "8443",
     "TLSKeyLocation": "./devssl/server.key",
     "TLSCertLocation": "./devssl/server.pem",
-    "DatabasePath" : "./fastgate.db"
+    "DatabasePath" : "./fastgate.db",
+    "ProxyMode" : true
 
 }
