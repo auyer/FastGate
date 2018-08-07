@@ -15,11 +15,11 @@ var (
 	LogFile io.Writer
 	// TLSEnabled is used to tell if the config package was os was not able to load key and certification pair from the specified path.
 	TLSEnabled bool
-	// ConfigParams  *ConfigStruct stores the values found in the config file, or the default values.
-	ConfigParams = ConfigStruct{
+	// ConfigParams  *configStruct stores the values found in the config file, or the default values.
+	ConfigParams = configStruct{
 		LogLocation:     "",
-		HttpPort:        "8000",
-		HttpsPort:       "8443",
+		HTTPPort:        "8000",
+		HTTPSPort:       "8443",
 		TLSKeyLocation:  "./devssl/server.key",
 		TLSCertLocation: "./devssl/server.pem",
 		DatabasePath:    "./fastgate.db",
@@ -28,11 +28,11 @@ var (
 	}
 )
 
-// ConfigStruct is the structure expected to match with the configuration file.
-type ConfigStruct struct {
+// configStruct is the structure expected to match with the configuration file.
+type configStruct struct {
 	LogLocation     string `json:"LogLocation"`
-	HttpPort        string `json:"HttpPort"`
-	HttpsPort       string `json:"HttpsPort"`
+	HTTPPort        string `json:"HTTPPort"`
+	HTTPSPort       string `json:"HTTPSPort"`
 	TLSKeyLocation  string `json:"TLSKeyLocation"`
 	TLSCertLocation string `json:"TLSCertLocation"`
 	DatabasePath    string `json:"DatabasePath"`

@@ -133,9 +133,9 @@ func main() {
 		mode = "Proxy"
 	}
 	if config.TLSEnabled {
-		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Green("HTTPS"), color.Green(config.ConfigParams.HttpsPort), color.Cyan(mode))
+		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Green("HTTPS"), color.Green(config.ConfigParams.HTTPSPort), color.Cyan(mode))
 	} else {
-		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Red("HTTP"), color.Green(config.ConfigParams.HttpPort), color.Cyan(mode))
+		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Red("HTTP"), color.Green(config.ConfigParams.HTTPPort), color.Cyan(mode))
 	}
 
 	server.Logger.SetOutput(config.LogFile)
@@ -166,7 +166,7 @@ func main() {
 	}
 	if config.TLSEnabled {
 		go func() {
-			if err := server.StartTLS(":"+config.ConfigParams.HttpsPort, config.ConfigParams.TLSCertLocation, config.ConfigParams.TLSKeyLocation); err != nil {
+			if err := server.StartTLS(":"+config.ConfigParams.HTTPSPort, config.ConfigParams.TLSCertLocation, config.ConfigParams.TLSKeyLocation); err != nil {
 				server.Logger.Info("shutting down the server")
 			}
 		}()
@@ -183,7 +183,7 @@ func main() {
 		}
 	} else {
 		go func() {
-			if err := server.Start(":" + config.ConfigParams.HttpPort); err != nil {
+			if err := server.Start(":" + config.ConfigParams.HTTPPort); err != nil {
 				server.Logger.Info("shutting down the server")
 			}
 		}()
