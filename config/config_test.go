@@ -17,11 +17,12 @@ const (
 		"HttpsPort": "8443test",
 		"TLSKeyLocation": "./tls_test.go.key",
 		"TLSCertLocation": "./tls.test.go.pem",
-		"DatabasePath" : "./test_fastgate.db"
+		"DatabasePath" : "./test_fastgate.db",
+		"ProxyMode" : true 
 }`
 )
 
-func TestConfRead(t *testing.T) {
+func TestDefaultConfig(t *testing.T) {
 	//Creating Test Structure
 	if _, err := os.Stat(testConfigPath); !os.IsNotExist(err) {
 		err = os.Remove(testConfigPath)
@@ -37,9 +38,11 @@ func TestConfRead(t *testing.T) {
 	tmp := ConfigParams
 	fmt.Printf(tmp.Debug)
 	if ConfigParams.Debug != "true" && ConfigParams.LogLocation != "os.Stdout" && ConfigParams.HttpPort != "8080" && ConfigParams.HttpsPort != "8443" && ConfigParams.TLSKeyLocation != "./devssl/server.key" &&
-		ConfigParams.TLSCertLocation != "./devssl/server.pem" && ConfigParams.DatabasePath != "./fastgate.db" {
+		ConfigParams.TLSCertLocation != "./devssl/server.pem" && ConfigParams.DatabasePath != "./fastgate.db" && ConfigParams.ProxyMode {
 		t.Errorf("Default Configuration read wrongly.")
 	}
+}
+func TestConfRead(t *testing.T) {
 	// CREATING TestFile
 	fileConf, fileErr := os.Create(testConfigPath)
 	if fileErr != nil {
@@ -49,10 +52,34 @@ func TestConfRead(t *testing.T) {
 	fileConf.Close()
 
 	//TESTING with Config File
-	err = ReadConfig(testConfigPath)
+	err := ReadConfig(testConfigPath)
 	if err != nil {
 		t.Errorf("Unable to Read Configuration: " + err.Error())
 	}
+	if ConfigParams.Debug != "false" && ConfigParams.LogLocation != "./test_server.config_test.go.log" && ConfigParams.HttpPort != "8888test" && ConfigParams.HttpsPort != "88443test" && ConfigParams.DatabasePath != "./test_fastgate.db" && TLSEnabled != true {
+		t.Errorf("Configuration read from file Dont Match.")
+	}
+
+	// CLEAN files
+	err = os.Remove(testConfigPath)
+	if err != nil {
+		log.Fatal("Unable to clean Test ConfigFile. Check for permissions.")
+	}
+	err = os.Remove(ConfigParams.LogLocation)
+	if err != nil {
+		log.Fatal("Unable to clean Test Log. Check for permissions.")
+	}
+}
+
+func TestTLSCerts(t *testing.T) {
+	// CREATING TestFile
+	fileConf, fileErr := os.Create(testConfigPath)
+	if fileErr != nil {
+		log.Fatal("Unable to create Test Settings. Check for permissions.")
+	}
+	fileConf.WriteString(testConfig)
+	fileConf.Close()
+
 	if ConfigParams.TLSKeyLocation == "./tls_test.go.key" && ConfigParams.TLSCertLocation == "./tls.test.go.pem" {
 		if _, err := os.Stat(ConfigParams.TLSCertLocation); !os.IsNotExist(err) {
 			err = os.Remove(ConfigParams.TLSCertLocation)
@@ -60,11 +87,11 @@ func TestConfRead(t *testing.T) {
 				log.Fatal("Unable to clean Test Certificate. Check for permissions.")
 			}
 		}
-		fileConf, fileErr = os.Create(ConfigParams.TLSCertLocation)
+		fileConf, fileErr := os.Create(ConfigParams.TLSCertLocation)
 		if fileErr != nil {
 			log.Fatal("Unable to create Test Certificate. Check for permissions.")
 		}
-		fileConf.WriteString("TEST")
+		fileConf.WriteString(" ")
 		fileConf.Close()
 
 		if _, err := os.Stat(ConfigParams.TLSKeyLocation); !os.IsNotExist(err) {
@@ -77,32 +104,10 @@ func TestConfRead(t *testing.T) {
 		if fileErr != nil {
 			log.Fatal("Unable to create Test Key. Check for permissions.")
 		}
-		fileConf.WriteString("TEST")
+		fileConf.WriteString(" ")
 		fileConf.Close()
 		//CREATE cert Test Files
-	}
-	if ConfigParams.Debug != "false" && ConfigParams.LogLocation != "./test_server.config_test.go.log" && ConfigParams.HttpPort != "8888test" && ConfigParams.HttpsPort != "88443test" && ConfigParams.DatabasePath != "./test_fastgate.db" && TLSEnabled != true {
-		t.Errorf("Configuration read from file interpreted wrongly.")
-	} else if _, err := os.Stat(ConfigParams.TLSCertLocation); os.IsNotExist(err) {
-		t.Errorf("Unable to Create Log File at" + ConfigParams.LogLocation)
-	}
-
-	// CLEAN files
-	err = os.Remove(testConfigPath)
-	if err != nil {
-		log.Fatal("Unable to clean Test ConfigFile. Check for permissions.")
-	}
-	err = os.Remove(ConfigParams.TLSKeyLocation)
-	if err != nil {
-		log.Fatal("Unable to clean Test Key. Check for permissions.")
-	}
-	err = os.Remove(ConfigParams.TLSCertLocation)
-	if err != nil {
-		log.Fatal("Unable to clean Test Certificate. Check for permissions.")
-	}
-	err = os.Remove(ConfigParams.LogLocation)
-	if err != nil {
-		log.Fatal("Unable to clean Test Log. Check for permissions.")
+		ReadConfig(testConfigPath)
 	}
 }
 

@@ -37,7 +37,7 @@ type ConfigStruct struct {
 	TLSCertLocation string `json:"TLSCertLocation"`
 	DatabasePath    string `json:"DatabasePath"`
 	Debug           string `json:"Debug"`
-	ProxyMode       bool   `json"ProxyMode"`
+	ProxyMode       bool   `json:"ProxyMode"`
 }
 
 // ReadConfig tries to read a file in the provided path.
@@ -87,13 +87,12 @@ func createLogfile(logPath string) io.Writer {
 		}
 		fmt.Println("Writing logs to new file " + logPath)
 		return fileLog
-	} else {
-		fileLog, fileErr := os.OpenFile(logPath, os.O_RDWR|os.O_APPEND, 0660)
-		if fileErr != nil {
-			fmt.Println(fileErr)
-			return nil
-		}
-		fmt.Println("Writing logs to file " + logPath)
-		return fileLog
 	}
+	fileLog, fileErr := os.OpenFile(logPath, os.O_RDWR|os.O_APPEND, 0660)
+	if fileErr != nil {
+		fmt.Println(fileErr)
+		return nil
+	}
+	fmt.Println("Writing logs to file " + logPath)
+	return fileLog
 }
