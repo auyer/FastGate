@@ -23,7 +23,7 @@ var (
 		TLSKeyLocation:  "./devssl/server.key",
 		TLSCertLocation: "./devssl/server.pem",
 		DatabasePath:    "./fastgate.db",
-		Debug:           "true",
+		Debug:           true,
 		ProxyMode:       true,
 	}
 )
@@ -36,7 +36,7 @@ type configStruct struct {
 	TLSKeyLocation  string `json:"TLSKeyLocation"`
 	TLSCertLocation string `json:"TLSCertLocation"`
 	DatabasePath    string `json:"DatabasePath"`
-	Debug           string `json:"Debug"`
+	Debug           bool   `json:"Debug"`
 	ProxyMode       bool   `json:"ProxyMode"`
 }
 
@@ -52,11 +52,6 @@ func ReadConfig(configPath string) error {
 		if err != nil {
 			return err
 		}
-		if ConfigParams.Debug == "true" {
-			fmt.Println("Configuration Parameters")
-			fmt.Println(string(file))
-		}
-
 	}
 	if ConfigParams.LogLocation == "" {
 		LogFile = os.Stdout

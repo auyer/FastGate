@@ -1,5 +1,5 @@
 {
-    "Debug": "true",
+    "Debug": true,
     "LogLocation": "./server.log",
     "HTTPPort": "8000",
     "HTTPSPort": "8443",

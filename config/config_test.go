@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -11,7 +10,7 @@ const (
 	testConfigLogPath = "./test_server.config_test.go.log"
 	testConfigPath    = "./testconfig.config_test.go.json"
 	testConfig        = `{
-		"Debug": "false",
+		"Debug": false,
 		"LogLocation": "./test_server.config_test.go.log",
 		"HTTPPort": "8888test",
 		"HTTPSPort": "8443test",
@@ -31,13 +30,11 @@ func TestDefaultConfig(t *testing.T) {
 		}
 	}
 	// TEST with Default Configs
-	err := ReadConfig(testConfigPath)
+	err := ReadConfig("")
 	if err != nil {
 		t.Errorf("Unable to Read Configuration: " + err.Error())
 	}
-	tmp := ConfigParams
-	fmt.Printf(tmp.Debug)
-	if ConfigParams.Debug != "true" && ConfigParams.LogLocation != "os.Stdout" && ConfigParams.HTTPPort != "8080" && ConfigParams.HTTPSPort != "8443" && ConfigParams.TLSKeyLocation != "./devssl/server.key" &&
+	if !ConfigParams.Debug && ConfigParams.LogLocation != "os.Stdout" && ConfigParams.HTTPPort != "8080" && ConfigParams.HTTPSPort != "8443" && ConfigParams.TLSKeyLocation != "./devssl/server.key" &&
 		ConfigParams.TLSCertLocation != "./devssl/server.pem" && ConfigParams.DatabasePath != "./fastgate.db" && ConfigParams.ProxyMode {
 		t.Errorf("Default Configuration read wrongly.")
 	}
@@ -56,7 +53,7 @@ func TestConfRead(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unable to Read Configuration: " + err.Error())
 	}
-	if ConfigParams.Debug != "false" && ConfigParams.LogLocation != "./test_server.config_test.go.log" && ConfigParams.HTTPPort != "8888test" && ConfigParams.HTTPSPort != "88443test" && ConfigParams.DatabasePath != "./test_fastgate.db" && TLSEnabled != true {
+	if ConfigParams.Debug && ConfigParams.LogLocation != "./test_server.config_test.go.log" && ConfigParams.HTTPPort != "8888test" && ConfigParams.HTTPSPort != "88443test" && ConfigParams.DatabasePath != "./test_fastgate.db" && TLSEnabled != true {
 		t.Errorf("Configuration read from file Dont Match.")
 	}
 

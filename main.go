@@ -30,7 +30,6 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
-	"strconv"
 	"time"
 
 	"github.com/auyer/FastGate/config"
@@ -127,7 +126,7 @@ func main() {
 		log.Print(err.Error())
 		return
 	}
-	server.Debug, _ = strconv.ParseBool(config.ConfigParams.Debug)
+	server.Debug = config.ConfigParams.Debug
 	mode := "Redirect"
 	if config.ConfigParams.ProxyMode {
 		mode = "Proxy"
