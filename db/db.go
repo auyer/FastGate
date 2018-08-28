@@ -72,7 +72,7 @@ func GetEndpoints(database *badger.DB) (endpoints []Endpoint, err error) {
 			if err != nil {
 				return err
 			}
-			endpoints = append(endpoints, Endpoint{string(k), string(v)})
+			endpoints = append(endpoints, Endpoint{Address: string(v), Resource: string(k)})
 		}
 		return nil
 	})
