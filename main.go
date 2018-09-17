@@ -21,6 +21,7 @@ You can run FastGate with the following command:
 package main
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -32,12 +33,11 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/auyer/fastgate/db"
 	"github.com/auyer/fastgate/config"
+	"github.com/auyer/fastgate/db"
 	"github.com/dgraph-io/badger"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/labstack/gommon/color"
 )
 
 // confFlag stores the flags available when calling the program from the command line.
@@ -132,9 +132,9 @@ func main() {
 		mode = "Proxy"
 	}
 	if config.TLSEnabled {
-		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Green("HTTPS"), color.Green(config.ConfigParams.HTTPSPort), color.Cyan(mode))
+		log.Printf(banner, red("v"+version), blue(website), green("HTTPS"), green(config.ConfigParams.HTTPSPort), cyan(mode))
 	} else {
-		log.Printf(banner, color.Red("v"+version), color.Blue(website), color.Red("HTTP"), color.Green(config.ConfigParams.HTTPPort), color.Cyan(mode))
+		log.Printf(banner, red("v"+version), blue(website), red("HTTP"), green(config.ConfigParams.HTTPPort), cyan(mode))
 	}
 
 	server.Logger.SetOutput(config.LogFile)
@@ -197,5 +197,27 @@ func main() {
 		if err := server.Shutdown(ctx); err != nil {
 			server.Logger.Fatal(err)
 		}
+	}
+}
+
+// TEXT COLOUR FUNCTIONS
+type (
+	inner func(interface{}) string
+)
+
+var (
+	red   = outer("31")
+	green = outer("32")
+	blue  = outer("34")
+	cyan  = outer("36")
+)
+
+func outer(n string) inner {
+	return func(msg interface{}) string {
+		b := new(bytes.Buffer)
+		b.WriteString("\x1b[")
+		b.WriteString(n)
+		b.WriteString("m")
+		return fmt.Sprintf("%s%v\x1b[0m", b.String(), msg)
 	}
 }
