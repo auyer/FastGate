@@ -5,9 +5,9 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.10
-    working_directory: /go/src/github.com/auyer/FastGate
+      - image: circleci/golang:1.11
+    working_directory: /go/src/github.com/auyer/fastgate
     steps:
       - checkout
-      - run: go get -v -t -d github.com/auyer/FastGate
+      - run: go get -v -t -d github.com/auyer/fastgate
       - run: go test -v ./...

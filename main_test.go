@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/auyer/FastGate/db"
+	"github.com/auyer/fastgate/db"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 )

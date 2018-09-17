@@ -32,8 +32,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/auyer/FastGate/config"
-	"github.com/auyer/FastGate/db"
+	"github.com/auyer/fastgate/db"
+	"github.com/auyer/fastgate/config"
 	"github.com/dgraph-io/badger"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
