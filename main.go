@@ -23,6 +23,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -36,8 +37,7 @@ import (
 	"github.com/auyer/fastgate/config"
 	"github.com/auyer/fastgate/db"
 	"github.com/dgraph-io/badger"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/gorilla/mux"
 )
 
 // confFlag stores the flags available when calling the program from the command line.
@@ -47,77 +47,114 @@ var confFlag = flag.String("config", "./config.json", "PATH to Configuration Fil
 var database *badger.DB
 
 const (
-	version = "0.3"
+	version = "0.4"
 	website = "github.com/auyer/fastgate/"
 	banner  = "\n\x0a\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x20\x20\x20\x20\x20\x20\x5f\x5f\x5f\x5f\x5f\x20\x20\x20\x20\x20\x20\x0a\x5f\x5f\x5f\x20\x20\x5f\x5f\x5f\x5f\x2f\x5f\x5f\x5f\x5f\x5f\x20\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x5f\x20\x20\x2f\x5f\x5f\x20\x20\x5f\x5f\x5f\x5f\x2f\x5f\x5f\x5f\x5f\x5f\x20\x5f\x5f\x20\x20\x2f\x5f\x5f\x5f\x5f\x5f\x20\x0a\x5f\x5f\x20\x20\x2f\x5f\x20\x20\x20\x5f\x20\x20\x5f\x5f\x20\x60\x2f\x5f\x20\x20\x5f\x5f\x5f\x2f\x20\x20\x5f\x5f\x2f\x20\x20\x2f\x20\x5f\x5f\x20\x5f\x20\x20\x5f\x5f\x20\x60\x2f\x20\x20\x5f\x5f\x2f\x20\x20\x5f\x20\x5c\x0a\x5f\x20\x20\x5f\x5f\x2f\x20\x20\x20\x2f\x20\x2f\x5f\x2f\x20\x2f\x5f\x28\x5f\x5f\x20\x20\x29\x2f\x20\x2f\x5f\x20\x2f\x20\x2f\x5f\x2f\x20\x2f\x20\x2f\x20\x2f\x5f\x2f\x20\x2f\x2f\x20\x2f\x5f\x20\x2f\x20\x20\x5f\x5f\x2f\x0a\x2f\x5f\x2f\x20\x20\x20\x20\x20\x20\x5c\x5f\x5f\x2c\x5f\x2f\x20\x2f\x5f\x5f\x5f\x5f\x2f\x20\x5c\x5f\x5f\x2f\x20\x5c\x5f\x5f\x5f\x5f\x2f\x20\x20\x5c\x5f\x5f\x2c\x5f\x2f\x20\x5c\x5f\x5f\x2f\x20\x5c\x5f\x5f\x5f\x2f\x20\x20%s\nFast, light and Low Overhead API Gateway written in GO\n%s \nServing %s on port => %s \nFastGate is Running in %s Mode\n_________________________________________________________________\n\n"
 	// logo built with http://www.patorjk.com/software and https://www.browserling.com/tools/utf8-encode
 )
 
 // postNewEndpoint will create new endpoints upon request
-func postNewEndpoint(c echo.Context) error {
+func postNewEndpoint(writer http.ResponseWriter, request *http.Request) {
 	var endp db.Endpoint
-	err := c.Bind(&endp)
+	decoder := json.NewDecoder(request.Body)
+	err := decoder.Decode(&endp)
 	if err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		log.Println(err)
+		writer.WriteHeader(http.StatusBadRequest)
+		writer.Write([]byte(err.Error()))
+		log.Print("[MUX] " + " | 400 | " + request.Method + "  " + request.URL.Path)
+		return
 	}
-	db.UpdateEndpoint(database, endp.Resource, endp.Address)
-	return c.String(http.StatusCreated, " ")
+	err = db.UpdateEndpoint(database, endp.Resource, endp.Address)
+	writer.WriteHeader(http.StatusCreated)
+	if err != nil {
+		if err != nil {
+			log.Println(err)
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte(err.Error()))
+			log.Print("[MUX] " + " | 500 | " + request.Method + "  " + request.URL.Path)
+			return
+		}
+	}
+	log.Print("[MUX] " + " | 201 | " + request.Method + "  " + request.URL.Path)
+	return
 }
 
 // getAllEndpoints will return all registered endpoints
-func getAllEndpoints(c echo.Context) error {
+func getAllEndpoints(writer http.ResponseWriter, request *http.Request) {
 	res, err := db.GetEndpoints(database)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, " ")
+		log.Println(err)
+		writer.WriteHeader(http.StatusNotFound)
+		writer.Write([]byte(err.Error()))
+		log.Print("[MUX] " + " | 400 | " + request.Method + "  " + request.URL.Path)
+		return
 	}
-	return c.JSON(http.StatusAccepted, res)
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(&res)
+	log.Print("[MUX] " + " | 200 | " + request.Method + "  " + request.URL.Path)
+	return
 }
 
 // redirectToEndpoint handler will redirect the request to the address registered
-func redirectToEndpoint(c echo.Context) error {
-	resource := c.Request().Header.Get("X-fastgate-resource")
+func redirectToEndpoint(writer http.ResponseWriter, request *http.Request) {
+	resource := request.Header.Get("X-fastgate-resource")
 	if resource != "" {
 		value, err := db.GetEndpoint(database, resource)
 		if err != nil {
-			return c.String(http.StatusNotFound, err.Error())
+			writer.WriteHeader(http.StatusNotFound)
+			log.Print("[MUX] " + " | 404 | " + request.Method + "  " + request.URL.Path)
+			return
 		}
-		return c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(value, c.Request().URL.Path))
+		http.Redirect(writer, request, fmt.Sprint(value, request.URL.Path), http.StatusTemporaryRedirect)
+		return
 	}
-	return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
+	writer.WriteHeader(http.StatusBadRequest)
+	writer.Write([]byte("X-fastgate-resource header missing"))
+	log.Print("[MUX] " + " | 400 | " + request.Method + "  " + request.URL.Path)
+	return
 }
 
 // proxyToEndpoint handler will proxy the request to the address registered
-func proxyToEndpoint(c echo.Context) error {
-	resource := c.Request().Header.Get("X-fastgate-resource")
+func proxyToEndpoint(writer http.ResponseWriter, request *http.Request) {
+	resource := request.Header.Get("X-fastgate-resource")
 	if resource != "" {
 		value, err := db.GetEndpoint(database, resource)
 		if err != nil {
-			return c.String(http.StatusNotFound, err.Error())
+			writer.WriteHeader(http.StatusNotFound)
+			log.Print("[MUX] " + " | 404 | " + request.Method + "  " + request.URL.Path)
+			return
 		}
-
-		return proxyForward(c.Response().Writer, c.Request(), fmt.Sprint(value))
+		err = proxyForward(writer, request, fmt.Sprint(value))
+		if err != nil {
+			writer.WriteHeader(http.StatusInternalServerError)
+			log.Print("[MUX] " + " | 500 | " + request.Method + "  " + request.URL.Path)
+			return
+		}
+		return
 	}
-	return c.String(http.StatusBadRequest, "X-fastgate-resource header missing")
+	writer.WriteHeader(http.StatusBadRequest)
+	writer.Write([]byte("X-fastgate-resource header missing"))
+	log.Print("[MUX] " + " | 400 | " + request.Method + "  " + request.URL.Path)
+	return
 }
 
 // proxyForward function handles the Reverse Proxy modifing a few parameters to mantain TLS-ability
-func proxyForward(w http.ResponseWriter, r *http.Request, dest string) error {
+func proxyForward(writer http.ResponseWriter, request *http.Request, dest string) error {
 	destURL, err := url.Parse(dest)
 	proxy := httputil.NewSingleHostReverseProxy(destURL)
 
-	r.URL.Host = destURL.Host
-	r.URL.Scheme = destURL.Scheme
-	r.Header.Set("X-Forwarded-Host", r.Header.Get("Host"))
-	r.Host = destURL.Host
-	proxy.ServeHTTP(w, r)
+	request.URL.Host = destURL.Host
+	request.URL.Scheme = destURL.Scheme
+	request.Header.Set("X-Forwarded-Host", request.Header.Get("Host"))
+	request.Host = destURL.Host
+	proxy.ServeHTTP(writer, request)
 	return err
 }
 
 // main function is run when running FastGate. It is responsible for gluing everything together
 func main() {
-	server := echo.New()
-	server.HideBanner = true
-	server.HidePort = true
+	router := mux.NewRouter()
 	log.Printf("Starting FastGate APIGateway")
 	flag.Parse()
 	err := config.ReadConfig(*confFlag)
@@ -126,7 +163,6 @@ func main() {
 		log.Print(err.Error())
 		return
 	}
-	server.Debug = config.ConfigParams.Debug
 	mode := "Redirect"
 	if config.ConfigParams.ProxyMode {
 		mode = "Proxy"
@@ -136,8 +172,6 @@ func main() {
 	} else {
 		log.Printf(banner, red("v"+version), blue(website), red("HTTP"), green(config.ConfigParams.HTTPPort), cyan(mode))
 	}
-
-	server.Logger.SetOutput(config.LogFile)
 	log.SetOutput(config.LogFile)
 
 	// Database loading/Initializing
@@ -147,26 +181,25 @@ func main() {
 	}
 	defer database.Close()
 
-	server.Use(middleware.Logger())
-	server.Use(middleware.Recover())
-
 	// Loading postNewEndpoint route
-	server.POST("/fastgate/", postNewEndpoint)
+	router.HandleFunc("/fastgate/", postNewEndpoint).Methods("POST")
 
 	// Loading getAllEndpoints route
-	server.GET("/fastgate/", getAllEndpoints)
+	router.HandleFunc("/fastgate/", getAllEndpoints).Methods("GET")
 
 	if config.ConfigParams.ProxyMode {
 		// Loading redirectToEndpoint route Proxy Mode
-		server.Any("/*", proxyToEndpoint)
+		router.PathPrefix("/").HandlerFunc(proxyToEndpoint)
 	} else {
 		// Loading redirectToEndpoint route Redirect Mode
-		server.Any("/*", redirectToEndpoint)
+		router.PathPrefix("/").HandlerFunc(redirectToEndpoint)
 	}
+	var server *http.Server
 	if config.TLSEnabled {
 		go func() {
-			if err := server.StartTLS(":"+config.ConfigParams.HTTPSPort, config.ConfigParams.TLSCertLocation, config.ConfigParams.TLSKeyLocation); err != nil {
-				server.Logger.Info("shutting down the server")
+			server = &http.Server{Addr: ":" + config.ConfigParams.HTTPSPort, Handler: router}
+			if err := server.ListenAndServeTLS(config.ConfigParams.TLSCertLocation, config.ConfigParams.TLSKeyLocation); err != nil {
+				log.Print("shutting down the server")
 			}
 		}()
 
@@ -178,12 +211,13 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := server.Shutdown(ctx); err != nil {
-			server.Logger.Fatal(err)
+			log.Fatal(err)
 		}
 	} else {
 		go func() {
-			if err := server.Start(":" + config.ConfigParams.HTTPPort); err != nil {
-				server.Logger.Info("shutting down the server")
+			server = &http.Server{Addr: ":" + config.ConfigParams.HTTPPort, Handler: router}
+			if err := server.ListenAndServe(); err != nil {
+				log.Print("shutting down the server")
 			}
 		}()
 
@@ -195,7 +229,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := server.Shutdown(ctx); err != nil {
-			server.Logger.Fatal(err)
+			log.Fatal(err)
 		}
 	}
 }
