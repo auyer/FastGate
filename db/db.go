@@ -48,7 +48,8 @@ func GetEndpoint(database *badger.DB, key string) (value string, err error) {
 		if err != nil {
 			return err
 		}
-		val, err := item.Value()
+		var val []byte
+		val, err = item.ValueCopy(val)
 		if err != nil {
 			return err
 		}
@@ -68,11 +69,12 @@ func GetEndpoints(database *badger.DB) (endpoints []Endpoint, err error) {
 		for it.Rewind(); it.Valid(); it.Next() {
 			item := it.Item()
 			k := item.Key()
-			v, err := item.Value()
+			var val []byte
+			val, err = item.ValueCopy(val)
 			if err != nil {
 				return err
 			}
-			endpoints = append(endpoints, Endpoint{Address: string(v), Resource: string(k)})
+			endpoints = append(endpoints, Endpoint{Address: string(val), Resource: string(k)})
 		}
 		return nil
 	})
